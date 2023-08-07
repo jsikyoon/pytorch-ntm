@@ -63,7 +63,7 @@ class NTMReadHead(NTMHeadBase):
 
     def create_new_state(self, batch_size):
         # The state holds the previous time step address weightings
-        return torch.zeros(batch_size, self.N)
+        return torch.zeros(batch_size, self.N).to("cuda:0")
 
     def reset_parameters(self):
         # Initialize the linear layers
@@ -99,7 +99,7 @@ class NTMWriteHead(NTMHeadBase):
         self.reset_parameters()
 
     def create_new_state(self, batch_size):
-        return torch.zeros(batch_size, self.N)
+        return torch.zeros(batch_size, self.N).to("cuda:0")
 
     def reset_parameters(self):
         # Initialize the linear layers

@@ -33,16 +33,21 @@ class EncapsulatedNTM(nn.Module):
         self.M = M
 
         # Create the NTM components
+        print(f"Creating EncapsulatedNTM with num_inputs={num_inputs}, num_outputs={num_outputs}, controller_size={controller_size}, controller_layers={controller_layers}, num_heads={num_heads}, N={N}, M={M}")
         memory = NTMMemory(N, M)
+        print(f"Created memory with N={N}, M={M}")
         controller = LSTMController(num_inputs + M*num_heads, controller_size, controller_layers)
-        heads = nn.ModuleList([])
+        print(f"Created controller with num_inputs={num_inputs}, M={M}, num_heads={num_heads}, controller_size={controller_size}, controller_layers={controller_layers}")
+        heads = []
         for i in range(num_heads):
             heads += [
                 NTMReadHead(memory, controller_size),
                 NTMWriteHead(memory, controller_size)
             ]
-
+        heads = nn.ModuleList(heads)
+        print(f"Created heads with num_heads={num_heads}")
         self.ntm = NTM(num_inputs, num_outputs, controller, memory, heads)
+        print(f"Created NTM with num_inputs={num_inputs}, num_outputs={num_outputs}, controller={controller}, memory={memory}, heads={heads}")
         self.memory = memory
 
     def init_sequence(self, batch_size):
@@ -53,7 +58,7 @@ class EncapsulatedNTM(nn.Module):
 
     def forward(self, x=None):
         if x is None:
-            x = torch.zeros(self.batch_size, self.num_inputs)
+            x = torch.zeros(self.batch_size, self.num_inputs).to("cuda:0")
 
         o, self.previous_state = self.ntm(x, self.previous_state)
         return o, self.previous_state

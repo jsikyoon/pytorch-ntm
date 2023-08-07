@@ -100,7 +100,7 @@ def train_batch(net, criterion, optimizer, X, Y):
 
     # Feed the sequence + delimiter
     for i in range(inp_seq_len):
-        net(X[i])
+        net(X[i].to("cuda:0"))
 
     # Read the output (no input given)
     y_out = torch.zeros(Y.size())
@@ -132,7 +132,7 @@ def evaluate(net, criterion, X, Y):
     # Feed the sequence + delimiter
     states = []
     for i in range(inp_seq_len):
-        o, state = net(X[i])
+        o, state = net(X[i].to("cuda:0"))
         states += [state]
 
     # Read the output (no input given)
@@ -140,7 +140,7 @@ def evaluate(net, criterion, X, Y):
     for i in range(outp_seq_len):
         y_out[i], state = net()
         states += [state]
-
+        
     loss = criterion(y_out, Y)
 
     y_out_binarized = y_out.clone().data
@@ -150,7 +150,7 @@ def evaluate(net, criterion, X, Y):
     cost = torch.sum(torch.abs(y_out_binarized - Y.data))
 
     result = {
-        'loss': loss.data[0],
+        'loss': loss.data,
         'cost': cost / batch_size,
         'y_out': y_out,
         'y_out_binarized': y_out_binarized,

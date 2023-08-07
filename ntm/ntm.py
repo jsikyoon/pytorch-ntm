@@ -36,7 +36,7 @@ class NTM(nn.Module):
         self.init_r = []
         for head in heads:
             if head.is_read_head():
-                init_r_bias = torch.randn(1, self.M) * 0.01
+                init_r_bias = torch.randn(1, self.M).to("cuda:0") * 0.01
                 self.register_buffer("read{}_bias".format(self.num_read_heads), init_r_bias.data)
                 self.init_r += [init_r_bias]
                 self.num_read_heads += 1

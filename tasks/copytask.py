@@ -97,6 +97,8 @@ class CopyTaskModelTraining(object):
                               self.params.controller_size, self.params.controller_layers,
                               self.params.num_heads,
                               self.params.memory_n, self.params.memory_m)
+        net = net.to("cuda:0")
+        print(f"Created EncapsulatedNTM with num_inputs={self.params.sequence_width + 1}, num_outputs={self.params.sequence_width}, controller_size={self.params.controller_size}, controller_layers={self.params.controller_layers}, num_heads={self.params.num_heads}, N={self.params.memory_n}, M={self.params.memory_m}")
         return net
 
     @dataloader.default

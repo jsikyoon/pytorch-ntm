@@ -88,7 +88,7 @@ class NTMMemory(nn.Module):
         return g * wc + (1 - g) * w_prev
 
     def _shift(self, wg, s):
-        result = torch.zeros(wg.size())
+        result = torch.zeros(wg.size()).to("cuda:0")
         for b in range(self.batch_size):
             result[b] = _convolve(wg[b], s[b])
         return result
